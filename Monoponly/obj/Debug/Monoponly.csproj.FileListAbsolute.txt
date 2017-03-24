@@ -1,0 +1,12 @@
+C:\Users\gert\Downloads\mono\Monoponly\Monoponly\bin\Debug\Monoponly.exe.config
+C:\Users\gert\Downloads\mono\Monoponly\Monoponly\obj\Debug\Monoponly.csprojResolveAssemblyReference.cache
+C:\Users\gert\Downloads\mono\Monoponly\Monoponly\bin\Debug\Monoponly.exe
+C:\Users\gert\Downloads\mono\Monoponly\Monoponly\bin\Debug\Monoponly.pdb
+C:\Users\gert\Downloads\mono\Monoponly\Monoponly\obj\Debug\Monoponly.exe
+C:\Users\gert\Downloads\mono\Monoponly\Monoponly\obj\Debug\Monoponly.pdb
+C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debug\Monoponly.exe.config
+C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debug\Monoponly.exe
+C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debug\Monoponly.pdb
+C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\obj\Debug\Monoponly.csprojResolveAssemblyReference.cache
+C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\obj\Debug\Monoponly.exe
+C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\obj\Debug\Monoponly.pdb
