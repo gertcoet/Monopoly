@@ -11,7 +11,7 @@ namespace Monoponly
         public static int RollDice(int Sides)
         {
             Random rand = new Random();
-            return rand.Next(1, 6);
+            return rand.Next(1, Sides);
         }
     }
 }

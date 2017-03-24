@@ -13,7 +13,10 @@ namespace Monoponly
             try
             {
                 Game game = new Game();
-                game.PlayerTurn(game.players.Peek());
+                for (int k = 0; k <= 100; k++)
+                {
+                    game.PlayerTurn(game.players.Peek());                    
+                }
 
             }
             catch (Exception e)

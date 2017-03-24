@@ -14,7 +14,7 @@ namespace Monoponly
         public int hotels { get; set; }
         public DiceSet dice = new DiceSet();
         public List<BoardSpace> Board = new List<BoardSpace>();
-        public Queue<Player> players = new Queue<Player>();
+        public Queue<Player> players = new Queue<Player>();        
 
         public const string Jail = "Jail";
 
@@ -92,22 +92,22 @@ namespace Monoponly
             public bool IsThirdDouble()
             {
                 //There has not been 3 rolls
-                if (rollLog.Count < 3)
+                if (rollLog.Count <= 3 )
                         return false;
 
-                for(int k = rollLog.Count;k >= rollLog.Count - 3; k--)
+                for(int k = rollLog.Count;k >= 3; k--)
                 {
-                    if (!(rollLog[k].IsMatch()))
+                    if (!(rollLog[rollLog.Count-k].IsMatch()))
                         return false;                    
                 }
 
                 return true;
             }
             public BoardSpace RollDiceAndMove(Game game)
-            {
-                DiceSet dice = new DiceSet();
-                dice.Roll();
-                rollLog.Add(dice);
+            {               
+                game.dice.Roll();
+                rollLog.Add(game.dice);
+                Console.WriteLine(game.dice.ToString());
 
                 //Move player to jail if this is his third double
                 if (IsThirdDouble() && !inJail)
@@ -119,24 +119,24 @@ namespace Monoponly
                 }
 
                 //If player is in Jail remain in Jail
-                if (inJail && !dice.IsMatch())
+                if (inJail && ! game.dice.IsMatch())
                 {
                     TurnOfNextPlayer(game);
                     throw new RemainInJailException($"{name} must remain in Jail!");
                 }
 
                 //Move player out of jail if in Jail. Move to new position and pay salary if needed
-                if (dice.IsMatch() && inJail)
+                if (game.dice.IsMatch() && inJail)
                 {
-                    MovePlayer(NewSpaceAfterRoll(dice, game),true);
+                    MovePlayer(NewSpaceAfterRoll(game.dice, game),true);
                     inJail = false;
                     TurnOfNextPlayer(game);
                     return currPos;
                 }
 
                 //Normal roll, move player and pay salary as needed
-                MovePlayer(NewSpaceAfterRoll(dice, game), true);
-                if (!(dice.IsMatch())) { TurnOfNextPlayer(game); }
+                MovePlayer(NewSpaceAfterRoll(game.dice, game), true);
+                if (!(game.dice.IsMatch())) { TurnOfNextPlayer(game); }
                 return currPos;                
             }
             public int DeductMoney(int Amount)
@@ -295,13 +295,19 @@ namespace Monoponly
 
         public class DiceSet
         {
+            Random rand;
             public int dice1 { get; set; }
             public int dice2 { get; set; }
 
+            public DiceSet()
+            {
+                rand = new Random();
+            }
+
             public void Roll()
             {
-                dice1 = GameUtilities.RollDice(6);
-                dice2 = GameUtilities.RollDice(6);
+                dice1 = rand.Next(1, 6);
+                dice2 = rand.Next(1, 6);
             }
 
             public Boolean IsMatch()
@@ -312,6 +318,11 @@ namespace Monoponly
             public int RollTotal()
             {
                 return dice1 + dice2;
+            }
+
+            public override string ToString()
+            {
+                return $"Dice1 : {dice1} ; Dice2 : {dice2}";
             }
         }
         #endregion
