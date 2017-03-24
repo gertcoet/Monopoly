@@ -12,20 +12,8 @@ namespace Monoponly
         {
             try
             {
-                //Game game = new Game();
-                //Console.WriteLine(game.ToString());            
-
-                LinkedList<int> list = new LinkedList<int>();
-
-                list.AddFirst(10);
-                list.AddLast(20);
-                list.AddLast(30);
-                list.AddLast(40);
-                list.AddLast(50);
-                list.AddLast(60);
-
-                Console.WriteLine(list.First.Value.ToString());
-                                               
+                Game game = new Game();
+                game.PlayerTurn(game.players.Peek());
 
             }
             catch (Exception e)
