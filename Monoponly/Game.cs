@@ -95,7 +95,7 @@ namespace Monoponly
                 if (rollLog.Count <= 3 )
                         return false;
 
-                for(int k = rollLog.Count;k >= 3; k--)
+                for(int k = 0;k < 2; k++)
                 {
                     if (!(rollLog[rollLog.Count-k].IsMatch()))
                         return false;                    

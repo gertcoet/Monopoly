@@ -13,9 +13,10 @@ namespace Monoponly
             try
             {
                 Game game = new Game();
+                Game.Player p = game.players.Peek();
                 for (int k = 0; k <= 100; k++)
                 {
-                    game.PlayerTurn(game.players.Peek());                    
+                    game.PlayerTurn(p);                    
                 }
 
             }
