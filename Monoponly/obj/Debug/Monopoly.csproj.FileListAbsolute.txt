@@ -6,3 +6,11 @@ C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debu
 C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debug\Monoponly.pdb
 C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debug\Newtonsoft.Json.dll
 C:\Users\gertc\Documents\Visual Studio 2017\Projects\Monopoly\Monoponly\bin\Debug\Newtonsoft.Json.xml
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\bin\Debug\Monoponly.exe.config
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\bin\Debug\Monoponly.exe
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\bin\Debug\Monoponly.pdb
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\bin\Debug\Newtonsoft.Json.dll
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\bin\Debug\Newtonsoft.Json.xml
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\obj\Debug\Monopoly.csprojResolveAssemblyReference.cache
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\obj\Debug\Monoponly.exe
+C:\Users\gert\Documents\Visual Studio 2017\Projects\monopoly\Monoponly\obj\Debug\Monoponly.pdb

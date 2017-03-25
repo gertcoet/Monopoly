@@ -14,7 +14,8 @@ namespace Monoponly
         public int hotels { get; set; }
         public DiceSet dice = new DiceSet();
         public List<BoardSpace> Board = new List<BoardSpace>();
-        public Queue<Player> players = new Queue<Player>();        
+        public Queue<Player> players = new Queue<Player>();
+        public List<RollLogEntry> rollLog = new List<RollLogEntry>();
 
         public const string Jail = "Jail";
 
@@ -68,8 +69,7 @@ namespace Monoponly
             public int money { get; set; }
             public bool inJail { get; set; }
             public bool isSolvant { get; set; }
-            public PlayerToker playerToken { get; set; }
-            public List<DiceSet> rollLog { get; set; }
+            public PlayerToker playerToken { get; set; }            
             public BoardSpace currPos { get; set; }
             public BoardSpace prevPos { get; set; }
 
@@ -83,34 +83,43 @@ namespace Monoponly
                 isSolvant = true;
                 playerToken = PlayerToken;
                 currPos = StartingPoint;
-                rollLog = new List<DiceSet>();
+                
             }
-            private void LogRollValues(DiceSet dice)
-            {
-                rollLog.Add(dice);
-            }
-            public bool IsThirdDouble()
-            {
-                //There has not been 3 rolls
-                if (rollLog.Count <= 3 )
-                        return false;
 
-                for(int k = 0;k < 2; k++)
+            private void LogRollValues(Game game)
+            {
+                game.rollLog.Add(new RollLogEntry(this, game.dice));
+            }
+
+            public bool IsThirdDouble(Game game)
+            {
+                int count = 0;
+
+                //check if there has been 3 rolls
+                var playerEnrties = game.rollLog.FindAll(i => i.player == this);
+
+                if (playerEnrties.Count < 3)
+                    return false;
+
+                var LastTreeEntries = playerEnrties.OrderByDescending(i => i.date).Take(3);
+
+                //get last 3 and check doubles                
+
+                foreach (RollLogEntry entry in LastTreeEntries)
                 {
-                    if (!(rollLog[rollLog.Count-k].IsMatch()))
-                        return false;                    
+                    if (entry.IsMatch()) { count++; }
                 }
 
-                return true;
+                return count == 3 ? true : false;
             }
             public BoardSpace RollDiceAndMove(Game game)
             {               
                 game.dice.Roll();
-                rollLog.Add(game.dice);
+                game.rollLog.Add(new RollLogEntry(this, game.dice));                
                 Console.WriteLine(game.dice.ToString());
 
                 //Move player to jail if this is his third double
-                if (IsThirdDouble() && !inJail)
+                if (IsThirdDouble(game) && !inJail)
                 {
                     inJail = true;
                     MovePlayer(game.GetSpaceByName(game,Jail),false);
@@ -325,6 +334,28 @@ namespace Monoponly
                 return $"Dice1 : {dice1} ; Dice2 : {dice2}";
             }
         }
+
+        public class RollLogEntry
+        {
+            public Player player { get; set; }      
+            public int dice1 { get; set; }
+            public int dice2 { get; set; }
+            public DateTime date { get; set; }
+
+            public RollLogEntry(Player player,DiceSet dice)
+            {
+                this.player = player;
+                this.dice1 = dice.dice1;
+                this.dice2 = dice.dice2;
+                date = System.DateTime.Now;
+            }
+
+            public bool IsMatch()
+            {
+                return dice1 == dice2 ? true : false;
+            }
+        }
+
         #endregion
 
         #region Exceptions
