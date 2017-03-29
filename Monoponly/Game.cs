@@ -13,8 +13,8 @@ namespace Monoponly
         public int houses { get; set; }
         public int hotels { get; set; }
         public DiceSet dice = new DiceSet();
-        public List<BoardSpace> Board = new List<BoardSpace>();
-        public Queue<Player> players = new Queue<Player>();
+        public BoardSpaceCollection Board = new BoardSpaceCollection();
+        public PlayerCollection players = new PlayerCollection();
         public List<RollLogEntry> rollLog = new List<RollLogEntry>();
 
         public const string Jail = "Jail";
@@ -71,7 +71,7 @@ namespace Monoponly
         #region interfaces
         public interface ICCardMove
         {
-            void MovePlayer(Player player, BoardSpace space);
+            void MovePlayer(Player player);
         }
 
         
@@ -98,33 +98,9 @@ namespace Monoponly
                 inJail = false;
                 isSolvant = true;
                 playerToken = PlayerToken;
-                currPos = StartingPoint;
-                
+                currPos = StartingPoint;                
             }
-
-            public class PlayerCollection 
-            {
-                Queue<Player> players = new Queue<Player>();
-
-                public Player GetCurrecntPlayer()
-                {
-                    return players.Peek();
-                }
-
-                public void PlayLostTurn()
-                {
-                    Player p = players.Dequeue();
-                    players.Enqueue(p);
-                }
-
-                public void Add(Player player)
-                {
-                    var existing = players.First(p => p.name == player.name);
-                    if (existing == null)
-                        throw new PlayerAlreadyExistsException($"{player.name} already is already registered for this game");
-                }
-            }
-
+            
             private void LogRollValues(Game game)
             {
                 game.rollLog.Add(new RollLogEntry(this, game.dice));
@@ -161,15 +137,15 @@ namespace Monoponly
                 if (IsThirdDouble(game) && !inJail)
                 {
                     inJail = true;
-                    MovePlayer(game.GetSpaceByName(game,Jail),false);
-                    TurnOfNextPlayer(game);
+                    MovePlayer(game.Board[Jail],false);
+                    game.players.NextPlayerTurn();
                     throw new GoToJailException($"{name} has been sent to Jail!");                    
                 }
 
                 //If player is in Jail remain in Jail
                 if (inJail && ! game.dice.IsMatch())
                 {
-                    TurnOfNextPlayer(game);
+                    game.players.NextPlayerTurn();
                     throw new RemainInJailException($"{name} must remain in Jail!");
                 }
 
@@ -178,15 +154,16 @@ namespace Monoponly
                 {
                     MovePlayer(NewSpaceAfterRoll(game.dice, game),true);
                     inJail = false;
-                    TurnOfNextPlayer(game);
+                    game.players.NextPlayerTurn();
                     return currPos;
                 }
 
                 //Normal roll, move player and pay salary as needed
                 MovePlayer(NewSpaceAfterRoll(game.dice, game), true);
-                if (!(game.dice.IsMatch())) { TurnOfNextPlayer(game); }
+                if (!(game.dice.IsMatch())) { game.players.NextPlayerTurn(); }
                 return currPos;                
             }
+
             public int DeductMoney(int Amount)
             {
                 if (Amount > money)
@@ -194,6 +171,7 @@ namespace Monoponly
 
                 return money=-Amount;
             }
+
             public void GiveSalary()
             {
                 money += salary;
@@ -213,11 +191,53 @@ namespace Monoponly
                 return game.Board[newPos];
             }
 
-            public void TurnOfNextPlayer(Game game)
-            {
-                Player p = game.players.Dequeue();
-                game.players.Enqueue(p);
+            //public void TurnOfNextPlayer(Game game)
+            //{
+            //    Player p = game.players.Dequeue();
+            //    game.players.Enqueue(p);
 
+            //}
+        }
+
+        public class PlayerCollection : IEnumerable
+        {
+            private Queue<Player> players;
+
+            public PlayerCollection()
+            {
+                players = new Queue<Player>();     
+            }
+
+            public Player GetCurrecntPlayer()
+            {
+                return players.Peek();
+            }
+
+            public void NextPlayerTurn()
+            {
+                Player p = players.Dequeue();
+                players.Enqueue(p);
+            }
+
+            public void Add(Player player)
+            {
+                //Check if there are any player in the que first
+                if (players.Count > 0)
+                {
+                    //Check if player exist
+                    var existing = players.FirstOrDefault(p => p.name == player.name);
+                    if (existing != null)
+                        throw new PlayerAlreadyExistsException($"{player.name} already is already registered for this game");
+                }
+
+                //Add player
+                players.Enqueue(player);
+
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return players.GetEnumerator();
             }
         }
 
@@ -237,13 +257,127 @@ namespace Monoponly
             }
         }
 
+        public class BoardSpaceCollection : IEnumerable
+        {
+            List<BoardSpace> board;
+
+            public int Count => board.Count;
+
+            public BoardSpaceCollection()
+            {
+                board = new List<BoardSpace>();
+            }
+
+            public BoardSpace this[string name]
+            {
+                get{ return board.FirstOrDefault(s => s.name == name);}
+            }
+
+            public BoardSpace this[int spaceNumber]
+            {
+                get { return board[spaceNumber];}
+            }
+
+            public void Add(BoardSpace space)
+            {
+                if (board.Count > 0)
+                {
+                    BoardSpace exisitng = board.FirstOrDefault<BoardSpace>(b => b.name == space.name);
+                    if (exisitng != null)
+                        throw new Exception("There is an exisiting property with this name!");
+                }
+
+                board.Add(space);
+            }            
+
+            public int UtilitiesPlayerOwn(Player p)
+            {
+                int own = 0;
+
+                foreach(BoardSpace space in board)
+                {
+                    if (space is Utility && (((Utility)space).owner == p))
+                        own++;
+                }
+
+                return own;
+            }
+
+            public int TransportionPlayerOwn(Player p)
+            {
+                int own = 0;
+
+                foreach (BoardSpace space in board)
+                {
+                    if (space is Transportation && (((Transportation)space).owner == p))
+                        own++;
+                }
+
+                return own;
+            }
+
+            public int PropertiesPlayerOwn(Player p,StreetColour StreetColour)
+            {
+                int own = 0;
+
+                foreach (BoardSpace space in board)
+                {
+                    if (
+                        space is Property 
+                        && (((Property)space).owner == p) 
+                        && (((Property)space).streetColour == StreetColour)
+                        )
+                    { own++; }                      
+                }
+
+                return own;
+            }
+
+            public int GetHotels(Player player)
+            {
+                int count = 0;
+
+                var list = board.Where(p => p is Property && ((Property)p).owner == player );
+                
+                foreach(Property p in list)
+                {
+                    if (p.buildingsOnProperty == 5) count++;
+                }
+
+                return count;
+            }
+
+            public int GetHouses(Player player)
+            {
+                int count = 0;
+
+                var list = board.Where(p => p is Property && ((Property)p).owner == player);
+
+                foreach (Property p in list)
+                {
+                    if ((p.buildingsOnProperty > 0) && (p.buildingsOnProperty < 5))
+                            count += p.buildingsOnProperty;
+                }
+
+                return count;
+            }
+
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return board.GetEnumerator();
+            }
+        }
+
         public abstract class PurchasableBoardSpace : BoardSpace
         {
             public int purchasePrice { get; }
             public int mortageValue { get; }
             public bool isMortaged { get; set; }
             public int[] rent { get; }
-            public Player owner { get; set; }
+            public Player owner { get; set; }            
+
+            public abstract int RentToPay(Game game,Player player);                      
 
             public PurchasableBoardSpace(string Name, int SeqenceNumber, int PurhcasePrice, int MortageValue) : base(Name, SeqenceNumber)
             {
@@ -251,14 +385,20 @@ namespace Monoponly
                 this.mortageValue = MortageValue;
                 this.isMortaged = false;
             }
+
+            public bool IsOwner(Player player)
+            {
+                return (owner == player) ? true : false;
+            }
         }
 
         public class Corner : BoardSpace
         {
-            public CornerType corner { get; }
-            public Corner(string Name, int SeqenceNumber, CornerType Corner) : base(Name, SeqenceNumber)
+            public CornerType cornerType { get; }
+
+            public Corner(string Name, int SeqenceNumber, CornerType CornerType) : base(Name, SeqenceNumber)
             {
-                this.corner = corner;
+                this.cornerType = CornerType;
             }
         }
 
@@ -271,9 +411,7 @@ namespace Monoponly
             {
                 this.taxAmount = Tax;
                 this.totalWorthPerc = TotalWorthPerc;
-            }
-            
-
+            }                    
         }
 
         public class Chance : BoardSpace
@@ -300,17 +438,59 @@ namespace Monoponly
                 this.threeRR = ThreeRR;
                 this.fourRR = FourRR;
             }
+
+            public override int RentToPay(Game game, Player player)
+            {
+                if (owner == player || owner == null || isMortaged)
+                    return 0;
+                else
+                {
+                    switch (game.Board.TransportionPlayerOwn(player))
+                    {
+                        case 1:
+                            return oneRR;                            
+                        case 2:
+                            return twoRR;                            
+                        case 3:
+                            return threeRR;                            
+                        case 4:
+                            return fourRR;                            
+                        default:
+                            throw new Exception($"Invalid amount({game.Board.TransportionPlayerOwn(player)}) of railroads owned!");
+                    }
+                }                                    
+            }
         }
 
         public class Utility : PurchasableBoardSpace
         {
             public int oneUtility { get;  }
             public int twoUtlility { get;  }
+
             public Utility(string Name, int SeqenceNumber, int PurhcasePrice, int MortageValue, int OneUtility, int TwoUtlility) : base(Name, SeqenceNumber, PurhcasePrice, MortageValue)
             {
                 this.oneUtility = OneUtility;
                 this.twoUtlility = TwoUtlility;
             }
+
+            public override int RentToPay(Game game,Player player)
+            {
+                if (owner == player || owner == null || isMortaged)
+                    return 0;
+                else
+                {
+                    switch (game.Board.UtilitiesPlayerOwn(player))
+                    {
+                        case 1:
+                            return oneUtility * game.dice.RollTotal();
+                        case 2:
+                            return twoUtlility * game.dice.RollTotal();                     
+                        default:
+                            throw new Exception($"Invalid amount({game.Board.TransportionPlayerOwn(player)}) of Utilities owned!");
+                    }
+                }
+            }
+            
         }
 
         public class Property : PurchasableBoardSpace
@@ -338,7 +518,46 @@ namespace Monoponly
                 this.buildingsOnProperty = 0;
             }
 
+            public override int RentToPay(Game game, Player player)
+            {
+                int own = 0;
 
+                //No rent to pay
+                if (owner == player || owner == null || isMortaged)
+                    return 0;
+
+                own = game.Board.PropertiesPlayerOwn(player, streetColour);                
+
+                //Dont own all streets in colours 
+                if (buildingsOnProperty == 0 && own != streetInColour)
+                    return rent;
+
+                //Owns all streets in colour, no buildings
+                if (buildingsOnProperty == 0 && own != streetInColour)
+                    return 2 * rent;
+
+                //Owns buildings
+                if(buildingsOnProperty != 0)                
+                {
+                    switch (buildingsOnProperty)
+                    {
+                        case 1:
+                            return house1;
+                        case 2:
+                            return house2;
+                        case 3:
+                            return house4;
+                        case 4:
+                            return house4;
+                        case 5:
+                            return hotel;
+                        default:
+                            throw new Exception($"Invalid number of buildings({own}) on property!");
+                    }
+                }
+
+                throw new Exception($"Failure calculating rent for {name}");
+            }
         }
 
         public class DiceSet
@@ -386,7 +605,7 @@ namespace Monoponly
                 this.player = player;
                 this.dice1 = dice.dice1;
                 this.dice2 = dice.dice2;
-                date = System.DateTime.Now;
+                date = System.DateTime.UtcNow;
             }
 
             public bool IsMatch()
@@ -409,11 +628,12 @@ namespace Monoponly
         }
 
         public class CCardPayment : CCard
-        {           
+        {
+            //Give negative values to deduct money
             public int amount { get; }
 
              public CCardPayment(CCardType CCardType, string Description,int Amount) : base(CCardType, Description)
-            {
+            {                
                 this.amount = Amount;
             }
             
@@ -429,11 +649,110 @@ namespace Monoponly
 
         public class CCardPaymentAllPlayer : CCardPayment
         {
-            public CCardPaymentAllPlayer(CCardType CCardType, string Description, int Amount) : base(CCardType, Description, Amount)
-            {
+            public bool includeCurrentPLayer { get; }
 
+            public CCardPaymentAllPlayer(CCardType CCardType, string Description, int Amount,bool IncludeCurrentPlayer) : base(CCardType, Description, Amount)
+            {
+                includeCurrentPLayer = IncludeCurrentPlayer;
+            }
+
+            public void ProcessPlayersPayment(Game game)
+            {
+                foreach (Player p in game.players)
+                {
+                    ProcessPayment(p);
+                }
             }
         }
+
+        public class CCardMoveTo : CCard
+        {
+            BoardSpace space { get; }
+
+            public CCardMoveTo(CCardType CCardType, string Description, BoardSpace Property) : base(CCardType, Description)
+            {
+                this.space = Property;
+            }
+
+            public void PerformAction(Game game,Player player)
+            {
+                if (space is Property)
+                {
+                    player.MovePlayer(space, true);
+                    //player.money -= ((Property)space).RentToPay(game, player);
+                    return;
+                }
+
+                if(space is Utility)
+                {
+                    player.MovePlayer(space, true);
+                    //player.money -= ((Utility)space).RentToPay(game, player) * 2;
+                    return;
+                }
+
+                if(space is Transportation)
+                {
+                    player.MovePlayer(space, true);
+                    //player.money -= ((Transportation)space).RentToPay(game, player);
+                    return;
+                }
+
+                if(space is Corner)
+                {
+                    switch(((Corner)space).cornerType)
+                    {
+                        case CornerType.FreeParking:
+                            player.MovePlayer(space, true);
+                            return;
+
+                        case CornerType.Jail:
+                            player.MovePlayer(space, false);
+                            player.inJail = true;
+                            game.players.NextPlayerTurn();
+                            return;
+
+                        case CornerType.Start:
+                            player.MovePlayer(space, false);                            
+                            game.players.NextPlayerTurn();
+                            return;
+                    }
+
+                }
+            }            
+            
+        }
+
+        public class CCardGetOutOfJail : CCard
+        {
+            public Player owner { get; set; }
+
+            public CCardGetOutOfJail(CCardType CCardType, string Description) : base(CCardType, Description)
+            { }                                    
+            
+        }
+
+        public class CCardStreetRepairs : CCard
+        {
+            public int costPerHouse { get; }
+            public int costPerHotel { get; }
+
+            public CCardStreetRepairs(CCardType CCardType, string Description, int House, int Hotel) : base(CCardType, Description)
+            {
+                costPerHouse = House;
+                costPerHotel = Hotel; 
+            }
+
+
+            public void PayForRepairs(Game game,Player player)
+            {
+                player.DeductMoney((costPerHotel * game.Board.GetHotels(player)) + (costPerHouse * game.Board.GetHotels(player)));
+            }
+            
+         
+            
+        }
+
+        
 
         #endregion
 
@@ -535,10 +854,10 @@ namespace Monoponly
             Board.Add(new Tax("Luxury Tax", 38, 100, 0));
             Board.Add(new Property("Mayfair", 39, 400, 200, 50, 200, 600, 1400, 1700, 2000) { streetInColour = 2, streetColour = StreetColour.Blue, buildingCost = 200 });
             //Add Players
-            players.Enqueue(new Player("Player One", PlayerToker.Boot,GetSpaceByName(this,"Go")));
-            players.Enqueue(new Player("Player Two", PlayerToker.Car, GetSpaceByName(this, "Go")));
-            players.Enqueue(new Player("Player Three", PlayerToker.Cat, GetSpaceByName(this, "Go")));
-            players.Enqueue(new Player("Player Four", PlayerToker.Dog, GetSpaceByName(this, "Go")));
+            players.Add(new Player("Player One", PlayerToker.Boot,Board["Go"]));
+            players.Add(new Player("Player Two", PlayerToker.Car, Board["Go"]));
+            players.Add(new Player("Player Three", PlayerToker.Cat, Board["Go"]));
+            players.Add(new Player("Player Four", PlayerToker.Dog, Board["Go"]));
 
         }
 
@@ -555,11 +874,7 @@ namespace Monoponly
             //If there is only one solvent player the game is over
             return count == 1? true : false;
         }
-
-        public BoardSpace GetSpaceByName(Game game, string name)
-        {
-            return game.Board.Find(item => item.name == name);
-        }
+        
 
         public void PlayerTurn(Player player)
         {

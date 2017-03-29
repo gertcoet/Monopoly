@@ -12,11 +12,12 @@ namespace Monoponly
         {
             try
             {
+
                 Game game = new Game();
-                Game.Player p = game.players.Peek();
+                Game.Player p = game.players.GetCurrecntPlayer();
                 for (int k = 0; k <= 1000; k++)
                 {
-                    game.PlayerTurn(p);                    
+                    game.PlayerTurn(p);
                 }
 
             }
