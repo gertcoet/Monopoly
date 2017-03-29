@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-
+using System.Collections;
 
 namespace Monoponly
 {
@@ -20,6 +20,12 @@ namespace Monoponly
         public const string Jail = "Jail";
 
         #region enum
+
+        public enum CCardType
+        {
+            Chance,
+            ComunityChest
+        }
         public enum PlayerToker
         {
             Dog,
@@ -62,6 +68,16 @@ namespace Monoponly
         }
         #endregion
 
+        #region interfaces
+        public interface ICCardMove
+        {
+            void MovePlayer(Player player, BoardSpace space);
+        }
+
+        
+
+        #endregion
+
         #region publicClasses
         public class Player
         {
@@ -84,6 +100,27 @@ namespace Monoponly
                 playerToken = PlayerToken;
                 currPos = StartingPoint;
                 
+            }
+
+            public class PlayerCollection 
+            {
+                Queue<Player> players = new Queue<Player>();
+
+                public Player GetCurrecntPlayer()
+                {
+                    return players.Peek();
+                }
+
+                public void PlayLostTurn()
+                {
+                    Player p = players.Dequeue();
+                    players.Enqueue(p);
+                }
+
+                public void Add(Player player)
+                {
+                    var existing = players.First(p => p.name == player.name);
+                }
             }
 
             private void LogRollValues(Game game)
@@ -353,6 +390,46 @@ namespace Monoponly
             public bool IsMatch()
             {
                 return dice1 == dice2 ? true : false;
+            }
+        }
+
+        public abstract class CCard
+        {
+            public CCardType ccardType { get; }
+            public String description { get; }                 
+            
+            public CCard(CCardType CCardType,string Description)
+            {
+                this.ccardType = CCardType;
+                this.description = Description;
+            }
+
+        }
+
+        public class CCardPayment : CCard
+        {           
+            public int amount { get; }
+
+             public CCardPayment(CCardType CCardType, string Description,int Amount) : base(CCardType, Description)
+            {
+                this.amount = Amount;
+            }
+            
+            public void ProcessPayment(Player player)
+            {
+                //Negative amounts for payments
+                if (amount < 0 || amount > player.money)
+                    throw new InsufficientFundsException($"{player.name} has insufficiant funds!");
+                else
+                    player.money += amount;
+            }            
+        }
+
+        public class CCardPaymentAllPlayer : CCardPayment
+        {
+            public CCardPaymentAllPlayer(CCardType CCardType, string Description, int Amount) : base(CCardType, Description, Amount)
+            {
+
             }
         }
 

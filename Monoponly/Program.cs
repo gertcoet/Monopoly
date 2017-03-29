@@ -14,7 +14,7 @@ namespace Monoponly
             {
                 Game game = new Game();
                 Game.Player p = game.players.Peek();
-                for (int k = 0; k <= 100; k++)
+                for (int k = 0; k <= 1000; k++)
                 {
                     game.PlayerTurn(p);                    
                 }
