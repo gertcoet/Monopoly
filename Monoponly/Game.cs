@@ -640,8 +640,8 @@ namespace Monoponly
             public void ProcessPayment(Player player)
             {
                 //Negative amounts for payments
-                if (amount < 0 || amount > player.money)
-                    throw new InsufficientFundsException($"{player.name} has insufficiant funds!");
+                if (amount < 0) 
+                    player.DeductMoney(Math.Abs(amount));
                 else
                     player.money += amount;
             }            
@@ -658,9 +658,16 @@ namespace Monoponly
 
             public void ProcessPlayersPayment(Game game)
             {
+                int total = 0;
+
                 foreach (Player p in game.players)
                 {
                     ProcessPayment(p);
+                    if (amount > 0)
+                        total += amount;
+                    else
+                        total -= amount;
+                    //?????/?
                 }
             }
         }
