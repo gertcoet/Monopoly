@@ -120,6 +120,8 @@ namespace Monoponly
                 public void Add(Player player)
                 {
                     var existing = players.First(p => p.name == player.name);
+                    if (existing == null)
+                        throw new PlayerAlreadyExistsException($"{player.name} already is already registered for this game");
                 }
             }
 
@@ -465,6 +467,17 @@ namespace Monoponly
             }
 
             public RemainInJailException(string message) : base(message)
+            {
+            }
+        }
+
+        public class PlayerAlreadyExistsException : Exception
+        {
+            public PlayerAlreadyExistsException()
+            {
+            }
+
+            public PlayerAlreadyExistsException(string message) : base(message)
             {
             }
         }
