@@ -56,5 +56,13 @@ namespace Monoponly
             CommunityChest
         }
         #endregion
+
+        public interface ICCard
+        {
+            void PerformActions(Game game, Player player);
+        }
+
+
+
     }
 }

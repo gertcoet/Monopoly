@@ -16,6 +16,8 @@ namespace Monoponly
         public BoardSpaceCollection Board = new BoardSpaceCollection();
         public PlayerCollection players = new PlayerCollection();
         public List<RollLogEntry> rollLog = new List<RollLogEntry>();
+        public CCardCollection chance = new CCardCollection();
+        public CCardCollection comChest = new CCardCollection();
 
         public const string Jail = "Jail";
 
@@ -40,13 +42,13 @@ namespace Monoponly
             Board.Add(new Property("Northumberland Avenue", 14, 160, 80, 12, 60, 180, 500, 700, 900) { streetInColour = 3, streetColour = StreetColour.Pink });
             Board.Add(new Transportation("Marylebone Station", 15, 200, 100, 25, 50, 100, 200));
             Board.Add(new Property("Bow Street", 16, 180, 90, 14, 70, 200, 550, 750, 950) { streetInColour = 3, streetColour = StreetColour.Organe, buildingCost = 100 });
-            Board.Add(new Chance("Community Chest", 17, ChanceType.Chance));
+            Board.Add(new Chance("Community Chest 1", 17, ChanceType.Chance));
             Board.Add(new Property("Marlborough Street", 18, 180, 90, 14, 70, 200, 550, 750, 950) { streetInColour = 3, streetColour = StreetColour.Organe, buildingCost = 100 });
             Board.Add(new Property("Vine Street", 19, 200, 100, 16, 80, 220, 600, 800, 1000) { streetInColour = 3, streetColour = StreetColour.Organe, buildingCost = 100 });
             // Third block
             Board.Add(new Corner("Free Parking", 20, CornerType.FreeParking));
             Board.Add(new Property("The Strand", 21, 220, 110, 18, 90, 250, 700, 875, 1050) { streetInColour = 3, streetColour = StreetColour.Red, buildingCost = 150 });
-            Board.Add(new Chance("Chance", 22, ChanceType.Chance));
+            Board.Add(new Chance("Chance 1", 22, ChanceType.Chance));
             Board.Add(new Property("Fleet Street", 23, 220, 110, 18, 90, 250, 700, 875, 1050) { streetInColour = 3, streetColour = StreetColour.Red, buildingCost = 150 });
             Board.Add(new Property("Trafalgar Square", 24, 240, 120, 20, 100, 300, 750, 925, 1100) { streetInColour = 3, streetColour = StreetColour.Red, buildingCost = 150 });
             Board.Add(new Transportation("Fenchurch St Station", 25, 200, 100, 25, 50, 100, 200));
@@ -58,10 +60,10 @@ namespace Monoponly
             Board.Add(new Corner("Go To Jail", 30, CornerType.GoToJail));
             Board.Add(new Property("Regent Street", 31, 300, 150, 26, 130, 390, 900, 1100, 1275) { streetInColour = 3, streetColour = StreetColour.Green, buildingCost = 200 });
             Board.Add(new Property("Oxford Street", 32, 300, 150, 26, 130, 390, 900, 1100, 1275) { streetInColour = 3, streetColour = StreetColour.Green, buildingCost = 200 });
-            Board.Add(new Chance("Community Chest", 33, ChanceType.CommunityChest));
+            Board.Add(new Chance("Community Chest 2", 33, ChanceType.CommunityChest));
             Board.Add(new Property("Bond Street", 34, 320, 160, 28, 150, 450, 1000, 1200, 1400) { streetInColour = 3, streetColour = StreetColour.Green, buildingCost = 200 });
             Board.Add(new Transportation("Liverpool Street Station", 35, 200, 100, 25, 50, 100, 200));
-            Board.Add(new Chance("Chance", 36, ChanceType.Chance));
+            Board.Add(new Chance("Chance 2", 36, ChanceType.Chance));
             Board.Add(new Property("Park Lane", 37, 350, 175, 35, 175, 500, 1100, 1300, 1500) { streetInColour = 2, streetColour = StreetColour.Blue, buildingCost = 200 });
             Board.Add(new Tax("Luxury Tax", 38, 100, 0));
             Board.Add(new Property("Mayfair", 39, 400, 200, 50, 200, 600, 1400, 1700, 2000) { streetInColour = 2, streetColour = StreetColour.Blue, buildingCost = 200 });
@@ -70,6 +72,11 @@ namespace Monoponly
             players.Add(new Player("Player Two", PlayerToker.Car, Board["Go"]));
             players.Add(new Player("Player Three", PlayerToker.Cat, Board["Go"]));
             players.Add(new Player("Player Four", PlayerToker.Dog, Board["Go"]));
+            //Add Chance
+            chance.Add(new CCardPayment(CCardType.Chance, "From sale of stock you get R100", 100));
+            chance.Add(new CCardMoveTo(CCardType.Chance,"Advance to GO",Board["GO"]));
+            chance.Add(new CCardMoveTo(CCardType.Chance, "Advance to Euston Road", Board["Euston Road"]));
+            chance.Add(new CCardMoveTo(CCardType.Chance, "Advance to Oxford Street", Board["Oxford Street"]));
 
         }
 
@@ -122,6 +129,6 @@ namespace Monoponly
             return json;
         }
 
-        
+
     }
 }

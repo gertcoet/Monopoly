@@ -46,8 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game.cs" />
+    <Compile Include="GameBoardSpace.cs" />
+    <Compile Include="GameCCards.cs" />
     <Compile Include="GameEnum.cs" />
     <Compile Include="GameException.cs" />
+    <Compile Include="GameExtentionMethods.cs" />
     <Compile Include="GameInnerClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
