@@ -104,6 +104,30 @@ namespace Monoponly
                 return own;
             }
 
+            public BoardSpace FindNextUtility(BoardSpace space)
+            {
+                int index = space.spaceNumber;
+                for (int k = 1; k <= board.Count; k++)
+                {
+                    index = (index + k) % board.Count();
+                    if (board[index].GetType() == typeof(Utility))
+                        return board[index];
+                }
+                throw new Exception("Can't find a Utility!");
+            }
+
+            public BoardSpace FindNextTrasportation(BoardSpace space)
+            {
+                int index = space.spaceNumber;
+                for (int k = 1; k <= board.Count; k++)
+                {
+                    index = (index + k) % board.Count();
+                    if (board[index].GetType() == typeof(Transportation))
+                        return board[index];
+                }
+                throw new Exception("Can't find a Transportation hub!");
+            }
+
             public int GetHotels(Player player)
             {
                 int count = 0;

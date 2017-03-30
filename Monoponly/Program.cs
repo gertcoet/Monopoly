@@ -14,11 +14,21 @@ namespace Monoponly
             {
 
                 Game game = new Game();
-                Game.Player p = game.players.GetCurrecntPlayer();
-                for (int k = 0; k <= 1000; k++)
+                
+                
+                foreach(Game.CCard card in game.chance)
                 {
-                    game.PlayerTurn(p);
+                    Game.Player p = game.players.GetCurrecntPlayer();
+                    Console.WriteLine(card.description);
+                    card.PerformActions(game, p);
+                    Console.WriteLine($"space={p.currPos.name} : {p.money}");
                 }
+                
+                
+                //for (int k = 0; k <= 1000; k++)
+                //{
+                //    game.PlayerTurn(p);
+                //}
 
             }
             catch (Exception e)

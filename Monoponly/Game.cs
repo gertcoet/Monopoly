@@ -16,8 +16,8 @@ namespace Monoponly
         public BoardSpaceCollection Board = new BoardSpaceCollection();
         public PlayerCollection players = new PlayerCollection();
         public List<RollLogEntry> rollLog = new List<RollLogEntry>();
-        public CCardCollection chance = new CCardCollection();
-        public CCardCollection comChest = new CCardCollection();
+        public CCardCollection chance;
+        public CCardCollection comChest;
 
         public const string Jail = "Jail";
 
@@ -73,10 +73,16 @@ namespace Monoponly
             players.Add(new Player("Player Three", PlayerToker.Cat, Board["Go"]));
             players.Add(new Player("Player Four", PlayerToker.Dog, Board["Go"]));
             //Add Chance
-            chance.Add(new CCardPayment(CCardType.Chance, "From sale of stock you get R100", 100));
-            chance.Add(new CCardMoveTo(CCardType.Chance,"Advance to GO",Board["GO"]));
-            chance.Add(new CCardMoveTo(CCardType.Chance, "Advance to Euston Road", Board["Euston Road"]));
-            chance.Add(new CCardMoveTo(CCardType.Chance, "Advance to Oxford Street", Board["Oxford Street"]));
+            List<CCard> chanceList = new List<CCard>();
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to GO", Board["Go"]));
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to Euston Road", Board["Euston Road"]));
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to Oxford Street", Board["Oxford Street"]));
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to next Utility", Board.FindNextUtility(Board[0])));
+
+            chanceList.Add(new CCardPayment(CCardType.Chance,"From sale of stock you get R100", 100));                        
+            
+            chance = new CCardCollection(chanceList);
+
 
         }
 

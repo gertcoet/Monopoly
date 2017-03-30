@@ -96,8 +96,8 @@ namespace Monoponly
                 }
 
                 if (space is Utility)
-                {
-                    player.MovePlayer(space, true);
+                {                   
+                    player.MovePlayer(game.Board.FindNextUtility(game.Board[player.currPos.spaceNumber]), true);
                     //player.money -= ((Utility)space).RentToPay(game, player) * 2;
                     return;
                 }
@@ -124,7 +124,7 @@ namespace Monoponly
                             return;
 
                         case CornerType.Start:
-                            player.MovePlayer(space, false);
+                            player.MovePlayer(space, true);
                             game.players.NextPlayerTurn();
                             return;
                     }
@@ -183,16 +183,23 @@ namespace Monoponly
 
         public class CCardCollection : IEnumerable
         {
-            private List<CCard> cards;          
-            public CCardCollection()
+            private Queue<CCard> cards;          
+            public CCardCollection(List<CCard> Cards)
             {
-                cards = new List<CCard>();
+                Cards.Shuffle<CCard>();
+                cards = new Queue<CCard>();
+
+                foreach (CCard card in Cards)
+                {
+                    cards.Enqueue(card);
+                }                                
             }
 
-            public void Add(CCard card)
+            public CCard GetCard()
             {
-                cards.Add(card);
-                cards.Shuffle<CCard>();
+                CCard card = cards.Dequeue();
+                cards.Enqueue(card);
+                return card;
             }
 
             IEnumerator IEnumerable.GetEnumerator()

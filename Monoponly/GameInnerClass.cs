@@ -22,7 +22,7 @@ namespace Monoponly
             public BoardSpace prevPos { get; set; }
             private static Random rng = new Random();
 
-            static readonly int salary;
+            static readonly int salary=200;
            
             public Player(string Name, PlayerToker PlayerToken, BoardSpace StartingPoint)
             {
@@ -112,7 +112,7 @@ namespace Monoponly
             public void MovePlayer(BoardSpace ToSpace, bool PassedGo)
             {
                 //Check if the player must be paid for passing go
-                if (PassedGo && (ToSpace.spaceNumber < currPos.spaceNumber))
+                if (PassedGo && (ToSpace.spaceNumber <= currPos.spaceNumber))
                     money += salary;
 
                 prevPos = currPos;
