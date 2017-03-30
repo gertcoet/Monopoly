@@ -46,7 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game.cs" />
-    <Compile Include="GameUtilities.cs" />
+    <Compile Include="GameEnum.cs" />
+    <Compile Include="GameException.cs" />
+    <Compile Include="GameInnerClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
