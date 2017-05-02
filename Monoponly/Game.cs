@@ -78,11 +78,39 @@ namespace Monoponly
             chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to Euston Road", Board["Euston Road"]));
             chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to Oxford Street", Board["Oxford Street"]));
             chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to next Utility", Board.FindNextUtility(Board[0])));
-
-            chanceList.Add(new CCardPayment(CCardType.Chance,"From sale of stock you get R100", 100));                        
-            
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Advance to next Transportaition", Board.FindNextTrasportation(Board[0])));
+            chanceList.Add(new CCardPayment(CCardType.Chance,"Bank pays ynu a divident of R50", 50));
+            chanceList.Add(new CCardGetOutOfJail(CCardType.Chance, "Get out of Jail free"));
+            chanceList.Add(new CCardMoveSpaces(CCardType.Chance, "Move back 3 spaces", -3));
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Go to Jail - Go Directly to Jail - Do not pass go, do not collect R200", Board["Jail"]));
+            chanceList.Add(new CCardStreetRepairs(CCardType.Chance, "Make general repairs on all your property – For each house pay R25 – For each hotel R100", 25, 100)); 
+            chanceList.Add(new CCardPayment(CCardType.Chance,"Pay poor tax of $15", -15));
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Take a trip to Kings Cross Station - If you pass Go, collect R200", Board["Kings Cross Station"])); 
+            chanceList.Add(new CCardMoveTo(CCardType.Chance, "Take a walk to Mayfair  – Advance token to Mayfair", Board["Mayfair"]));
+            chanceList.Add(new CCardPaymentAllPlayer(CCardType.Chance, "You have been elected Chairman of the Board – Pay each player R50", 50, false));
+            chanceList.Add(new CCardPayment(CCardType.Chance, "Your building loan matures – Collect R150", 150));
+            chanceList.Add(new CCardPayment(CCardType.Chance, "You have won a crossword comptition - Collect R100", 100));
             chance = new CCardCollection(chanceList);
-
+            //Add community chest 
+            List<CCard> communityChestList = new List<CCard>();
+            communityChestList.Add(new CCardMoveTo(CCardType.ComunityChest, "Advance to GO", Board["Go"]));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Bank error in your favor – Collect R200", 200)); 
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Doctor's fees – Pay R50", -50)); 
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "From sale of stock you get R50", 50));
+            communityChestList.Add(new CCardGetOutOfJail(CCardType.ComunityChest, "Get Out Of Jail Free"));
+            communityChestList.Add(new CCardMoveTo(CCardType.ComunityChest, "Go to Jail", Board["Jail"]));
+            communityChestList.Add(new CCardPaymentAllPlayer(CCardType.ComunityChest, "Grand Opera Night – Collect R50 from every player for opening night seats", 50, true));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Holiday Fund matures - Receive R100", 100));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Income tax refund – Collect R20", 20));
+            communityChestList.Add(new CCardPaymentAllPlayer(CCardType.ComunityChest, "It is your birthday - Collect R10 from each player", 10,true)); 
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Life insurance matures – Collect R100", 100));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Pay hospital fees of R100", -100));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Pay School fees", -150));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "Receive R25 consultancy fee", 25));
+            communityChestList.Add(new CCardStreetRepairs(CCardType.ComunityChest, "You are assessed for street repairs – R40 per house – R115 per hotel", 40, 115)); 
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "You have won second prize in a beauty contest – Collect R10", 10));
+            communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "You inherit R100", 100));
+            comChest = new CCardCollection(communityChestList);
 
         }
 

@@ -16,7 +16,7 @@ namespace Monoponly
                 Game game = new Game();
                 
                 
-                foreach(Game.CCard card in game.chance)
+                foreach(Game.CCard card in game.comChest)
                 {
                     Game.Player p = game.players.GetCurrecntPlayer();
                     Console.WriteLine(card.description);

@@ -102,7 +102,7 @@ namespace Monoponly
                 if (Amount > money)
                     throw new InsufficientFundsException($"{name} doesn not have enough money to complete this transaction ({money}) ");
 
-                return money = -Amount;
+                return money = money-Amount;
             }
 
             public void GiveSalary()

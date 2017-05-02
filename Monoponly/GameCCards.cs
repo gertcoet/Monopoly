@@ -46,34 +46,40 @@ namespace Monoponly
 
         public class CCardPaymentAllPlayer : CCardPayment
         {
-            public bool includeCurrentPLayer { get; }
+            public bool receiveMoney { get; }
 
-            public CCardPaymentAllPlayer(CCardType CCardType, string Description, int Amount, bool IncludeCurrentPlayer) : base(CCardType, Description, Amount)
+            public CCardPaymentAllPlayer(CCardType CCardType, string Description, int Amount, bool ReceiveMoney) : base(CCardType, Description, Amount)
             {
-                includeCurrentPLayer = IncludeCurrentPlayer;
+                receiveMoney = ReceiveMoney;
             }
 
             public override void PerformActions(Game game, Player player)
             {
-                int total = 0;
+                int absAmount = Math.Abs(amount);
 
-                foreach (Player p in game.players)
+                if (this.receiveMoney)//Other payer pay you
                 {
-                    if (player != p)
+                    foreach (Player p in game.players)
                     {
-                        if (amount < 0)
-                            p.money += Math.Abs(amount); //Pay other players                    
-                        else
-                            p.DeductMoney(Math.Abs(amount)); //Other payer pay you
-
-                        total += amount;
+                        if (player != p)
+                        {
+                            p.DeductMoney(absAmount);
+                            player.money += absAmount;
+                        }
                     }
                 }
-
-                if (amount < 0)
-                    player.DeductMoney(total); //Deduct total from player
                 else
-                    player.money += total; //Add total to player
+                {
+                    foreach (Player p in game.players)//Pay other players                    
+                    {
+                        if (player != p)
+                        {
+                            p.money += absAmount;
+                            player.DeductMoney(absAmount);
+                        }
+
+                    }
+                }
             }
         }
 
@@ -160,7 +166,7 @@ namespace Monoponly
 
             public override void PerformActions(Game game, Player player)
             {
-                player.DeductMoney((costPerHotel * game.Board.GetHotels(player)) + (costPerHouse * game.Board.GetHotels(player)));
+                player.DeductMoney((Math.Abs(costPerHotel) * game.Board.GetHotels(player)) + (Math.Abs(costPerHouse) * game.Board.GetHotels(player)));
             }            
 
         }
