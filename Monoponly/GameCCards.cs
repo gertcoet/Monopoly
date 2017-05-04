@@ -126,12 +126,12 @@ namespace Monoponly
                         case CornerType.Jail:
                             player.MovePlayer(space, false);
                             player.inJail = true;
-                            game.players.NextPlayerTurn();
+                            //game.players.NextPlayerTurn();
                             return;
 
                         case CornerType.Start:
                             player.MovePlayer(space, true);
-                            game.players.NextPlayerTurn();
+                            //game.players.NextPlayerTurn();
                             return;
                     }
 

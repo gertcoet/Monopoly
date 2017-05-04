@@ -22,6 +22,8 @@ namespace Monoponly
             public BoardSpace prevPos { get; set; }
             private static Random rng = new Random();
 
+            public event EventHandler<SendToJailEventArgs> SendToJail;
+
             static readonly int salary=200;
            
             public Player(string Name, PlayerToker PlayerToken, BoardSpace StartingPoint)
@@ -137,12 +139,13 @@ namespace Monoponly
                 return game.Board[newPos];
             }
 
-            //public void TurnOfNextPlayer(Game game)
-            //{
-            //    Player p = game.players.Dequeue();
-            //    game.players.Enqueue(p);
+        }
 
-            //}
+
+        public class SendToJailEventArgs : EventArgs
+        {
+            public Player player { get; set; }
+            public string message { get; set; }
         }
 
         public class PlayerCollection : IEnumerable
