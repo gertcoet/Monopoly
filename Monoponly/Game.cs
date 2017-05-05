@@ -17,11 +17,11 @@ namespace Monoponly
         public PlayerCollection players = new PlayerCollection();
         public List<RollLogEntry> rollLog = new List<RollLogEntry>();
         public CCardCollection chance;
-        public CCardCollection comChest;
-        private GameEventHandler gameEventHandler = new GameEventHandler();
+        public CCardCollection comChest;                
 
-        public event EventHandler<SendToJailEventArgs> SendToJail;
-
+        //Events
+        public event EventHandler<SendToJailEventArgs> SendToJail;        
+        
         public const string Jail = "Jail";
 
         public Game()
@@ -70,7 +70,7 @@ namespace Monoponly
             Board.Add(new Property("Park Lane", 37, 350, 175, 35, 175, 500, 1100, 1300, 1500) { streetInColour = 2, streetColour = StreetColour.Blue, buildingCost = 200 });
             Board.Add(new Tax("Luxury Tax", 38, 100, 0));
             Board.Add(new Property("Mayfair", 39, 400, 200, 50, 200, 600, 1400, 1700, 2000) { streetInColour = 2, streetColour = StreetColour.Blue, buildingCost = 200 });
-            //Add Players
+            //Add Players            
             players.Add(new Player("Player One", PlayerToker.Boot, Board["Go"]));
             players.Add(new Player("Player Two", PlayerToker.Car, Board["Go"]));
             players.Add(new Player("Player Three", PlayerToker.Cat, Board["Go"]));
@@ -117,6 +117,7 @@ namespace Monoponly
 
             //set event handlers
             SendToJail += GameEventHandler.SentToJailHandler;
+            
         }
 
         public override string ToString()
@@ -138,13 +139,14 @@ namespace Monoponly
             return count == 1? true : false;
         }        
 
-        public void PlayerTurn(Player player)
+        public void PlayerTurn()
         {
             try
             {
-                Console.WriteLine(player.currPos.name);
-                player.RollDiceAndMove(this);
-                Console.WriteLine(player.currPos.name);
+                Player player = players.GetCurrecntPlayer();
+                BoardSpace newPos = player.RollDiceAndMove(this);
+                player.PlayerLandedOnSpace(this, newPos);
+                
             }
             catch (Exception)
             {
@@ -153,17 +155,16 @@ namespace Monoponly
             
         }
 
+       
+
         public void SendPlayerToJail(Player player, string message)
         {
-            //SendToJailEventArgs args = new SendToJailEventArgs();
-            //args.jail = this.Board[Jail];
-            //args.message = message;
-            //args.player = player;
-            //args.game = this;
-
+            
             if (SendToJail != null)
                 SendToJail(this, new SendToJailEventArgs { jail = this.Board[Jail], player = player, game = this, message = message });
         }
+
+       
 
         public string printOwnable()
         {

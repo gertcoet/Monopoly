@@ -62,6 +62,11 @@ namespace Monoponly
             void PerformActions(Game game, Player player);
         }
 
+        public interface IRent
+        {
+            int RentToPay(Game game, Player player);
+        }
+
 
 
     }

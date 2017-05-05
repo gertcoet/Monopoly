@@ -22,6 +22,8 @@ namespace Monoponly
             public BoardSpace prevPos { get; set; }
             private static Random rng = new Random();
 
+            public event EventHandler<LandedOnSpaceEventArgs> LandOnSpace;
+
 
             static readonly int salary=200;
            
@@ -33,6 +35,8 @@ namespace Monoponly
                 isSolvant = true;
                 playerToken = PlayerToken;
                 currPos = StartingPoint;
+
+                LandOnSpace += GameEventHandler.LandedOnSpaceHandler;
             }
 
             private void LogRollValues(Game game)
@@ -65,7 +69,7 @@ namespace Monoponly
             {
                 game.dice.Roll();
                 game.rollLog.Add(new RollLogEntry(this, game.dice));
-                Console.WriteLine(game.dice.ToString());
+                //Console.WriteLine(game.dice.ToString());
 
                 //Move player to jail if this is his third double
                 if (IsThirdDouble(game) && !inJail)
@@ -73,14 +77,15 @@ namespace Monoponly
                     inJail = true;
                     MovePlayer(game.Board[Jail], false);
                     game.players.NextPlayerTurn();
-                    throw new GoToJailException($"{name} has been sent to Jail!");
+                    game.SendPlayerToJail(game.players.GetCurrecntPlayer(), "You have throw 3 doubles in a row - Go to Jail!");                    
                 }
 
                 //If player is in Jail remain in Jail
                 if (inJail && !game.dice.IsMatch())
                 {
                     game.players.NextPlayerTurn();
-                    throw new RemainInJailException($"{name} must remain in Jail!");
+                    // TODO : raise player is in jail event
+                    //throw new RemainInJailException($"{name} must remain in Jail!");
                 }
 
                 //Move player out of jail if in Jail. Move to new position and pay salary if needed
@@ -136,6 +141,15 @@ namespace Monoponly
             {
                 int newPos = ((currPos.spaceNumber + dice.RollTotal()) % game.Board.Count);
                 return game.Board[newPos];
+            }
+
+            public void PlayerLandedOnSpace(Game game, BoardSpace space)
+            {
+
+                if (LandOnSpace != null)
+                    LandOnSpace(this, new LandedOnSpaceEventArgs { game = game, boardspace = space, player = this });
+                //TODO hook upp the event actrion
+
             }
 
         }

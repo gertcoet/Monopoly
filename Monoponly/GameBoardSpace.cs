@@ -174,11 +174,22 @@ namespace Monoponly
 
             public abstract int RentToPay(Game game, Player player);
 
+            public virtual string GetProperyDetails()
+            {
+                String info = string.Format("{0,-35} {1,-100} \n", "Property", "Value");
+                info += string.Format("{0,-35} {1,-100} \n", "Name", name);
+                info += string.Format("{0,-35} {1,-100} \n", "Price", purchasePrice.ToString());                
+                info += string.Format("{0,-35} {1,-100} \n", "Mortaged", isMortaged.ToString());
+                //info += string.Format("{0,-35} {1,-100} ", "Owner", owner.name);
+
+                return info;
+            }
+
             public PurchasableBoardSpace(string Name, int SeqenceNumber, int PurhcasePrice, int MortageValue) : base(Name, SeqenceNumber)
             {
                 this.purchasePrice = PurhcasePrice;
                 this.mortageValue = MortageValue;
-                this.isMortaged = false;
+                this.isMortaged = false;                
             }
 
             public bool IsOwner(Player player)
@@ -288,7 +299,7 @@ namespace Monoponly
 
         }
 
-        public class Property : PurchasableBoardSpace
+        public class Property : PurchasableBoardSpace , IRent
         {
             public int streetInColour { get; set; }
             public int buildingCost { get; set; }
@@ -352,6 +363,20 @@ namespace Monoponly
                 }
 
                 throw new Exception($"Failure calculating rent for {name}");
+            }
+
+            public override string GetProperyDetails()
+            {
+                String info = string.Format("{0,-35} {1,-100} \n","Property","Value");
+                info += string.Format("{0,-35} {1,-100} \n", "Name", name);
+                info += string.Format("{0,-35} {1,-100} \n", "Price", purchasePrice.ToString());
+                info += string.Format("{0,-35} {1,-100} \n", "Building Cost", buildingCost.ToString());
+                info += string.Format("{0,-35} {1,-100} \n", "Number of buidlings", buildingsOnProperty.ToString());
+                info += string.Format("{0,-35} {1,-100} \n", "Mortaged", isMortaged.ToString());
+                //info += string.Format("{0,-35} {1,-100} ", "Owner", owner.name);
+
+                return info;
+
             }
         }
     }
