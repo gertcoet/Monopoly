@@ -22,7 +22,6 @@ namespace Monoponly
             public BoardSpace prevPos { get; set; }
             private static Random rng = new Random();
 
-            public event EventHandler<SendToJailEventArgs> SendToJail;
 
             static readonly int salary=200;
            
@@ -141,12 +140,6 @@ namespace Monoponly
 
         }
 
-
-        public class SendToJailEventArgs : EventArgs
-        {
-            public Player player { get; set; }
-            public string message { get; set; }
-        }
 
         public class PlayerCollection : IEnumerable
         {

@@ -18,6 +18,9 @@ namespace Monoponly
         public List<RollLogEntry> rollLog = new List<RollLogEntry>();
         public CCardCollection chance;
         public CCardCollection comChest;
+        private GameEventHandler gameEventHandler = new GameEventHandler();
+
+        public event EventHandler<SendToJailEventArgs> SendToJail;
 
         public const string Jail = "Jail";
 
@@ -112,6 +115,8 @@ namespace Monoponly
             communityChestList.Add(new CCardPayment(CCardType.ComunityChest, "You inherit R100", 100));
             comChest = new CCardCollection(communityChestList);
 
+            //set event handlers
+            SendToJail += GameEventHandler.SentToJailHandler;
         }
 
         public override string ToString()
@@ -146,6 +151,17 @@ namespace Monoponly
                 throw;
             }
             
+        }
+
+        public void SendPlayerToJail(Player player, string message)
+        {
+            SendToJailEventArgs args = new SendToJailEventArgs();
+            args.jail = this.Board[Jail];
+            args.message = message;
+            args.player = player;
+
+            if (SendToJail != null)
+                SendToJail(this, args);
         }
 
         public string printOwnable()

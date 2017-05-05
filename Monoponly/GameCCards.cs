@@ -126,6 +126,7 @@ namespace Monoponly
                         case CornerType.Jail:
                             player.MovePlayer(space, false);
                             player.inJail = true;
+                            game.SendPlayerToJail(player, description);
                             //game.players.NextPlayerTurn();
                             return;
 
