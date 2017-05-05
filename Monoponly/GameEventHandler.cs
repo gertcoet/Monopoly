@@ -13,12 +13,13 @@ namespace Monoponly
 
             public static void SentToJailHandler(object sender, SendToJailEventArgs e)
             {
-                Console.WriteLine($"{e.player.name} has been sent to Jail!");
-                Console.WriteLine("Do you want to pay R50 to get out of Jail now?");
+                Console.WriteLine($"*** {e.player.name} is going to Jail***");
+                Console.WriteLine(e.message);
+                Console.WriteLine("Do you want to pay R50 and get out of Jail immediately?");
                 string ans = Console.ReadLine();
 
-                //Move the player to the Jail position and set jail status as reiquired
-                //by his option
+                /*** Move the player to the Jail position and set jail status as reiquired
+                by his option ***/
                 e.player.MovePlayer(e.jail,false);
                 if (ans.ToUpper() != "Y")
                 {
@@ -29,6 +30,9 @@ namespace Monoponly
                     e.player.DeductMoney(50);
                 }
 
+                Console.WriteLine($"*** {e.player.name} --> Your turn has ended ***" + System.Environment.NewLine);
+                e.game.players.NextPlayerTurn();                                
+                Console.WriteLine($"*** {e.game.players.GetCurrecntPlayer().name} --> You're turn" + System.Environment.NewLine);
             }
 
         }
@@ -36,8 +40,8 @@ namespace Monoponly
         {
             public Player player { get; set; }
             public string message { get; set; }
-
             public BoardSpace jail { get; set; }
+            public Game game { get; set; }
         }
 
     }

@@ -15,7 +15,6 @@ namespace Monoponly
 
                 Game game = new Game();
                 
-                
                 foreach(Game.CCard card in game.comChest)
                 {
                     Game.Player p = game.players.GetCurrecntPlayer();
@@ -23,7 +22,6 @@ namespace Monoponly
                     card.PerformActions(game, p);
                     Console.WriteLine($"space={p.currPos.name} : {p.money}");
                 }
-                
                 
                 //for (int k = 0; k <= 1000; k++)
                 //{

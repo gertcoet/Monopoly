@@ -155,13 +155,14 @@ namespace Monoponly
 
         public void SendPlayerToJail(Player player, string message)
         {
-            SendToJailEventArgs args = new SendToJailEventArgs();
-            args.jail = this.Board[Jail];
-            args.message = message;
-            args.player = player;
+            //SendToJailEventArgs args = new SendToJailEventArgs();
+            //args.jail = this.Board[Jail];
+            //args.message = message;
+            //args.player = player;
+            //args.game = this;
 
             if (SendToJail != null)
-                SendToJail(this, args);
+                SendToJail(this, new SendToJailEventArgs { jail = this.Board[Jail], player = player, game = this, message = message });
         }
 
         public string printOwnable()
