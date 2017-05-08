@@ -107,13 +107,40 @@ namespace Monoponly
                 if (space is Chance chance)
                 {
                     Console.WriteLine($"{e.player.name} --> landed on ** {chance.name} **");
-                    // TODO : impliment chance actions
+                    if (chance.chaneType == ChanceType.Chance)
+                    {
+                        ICCard card = e.game.chance.GetCard();
+                        Console.WriteLine($"{e.player.name} is taking a chance card");
+                        Console.WriteLine(card.description);
+                        card.PerformActions(e.game, e.player);
+                    }
+                    else
+                    {
+                        ICCard card = e.game.comChest.GetCard();
+                        Console.WriteLine($"{e.player.name} is taking a community chest card");
+                        Console.WriteLine(card.description);
+                        card.PerformActions(e.game, e.player);
+                    }
                 }
 
                 if (space is Tax tax)
                 {
                     Console.WriteLine($"{e.player.name} --> landed on ** {tax.name} **");
-                    // TODO : impliment tax actions
+                    Console.WriteLine("Do you want to pay (a) R200 or (b) 10%?");
+                    string input = Console.ReadLine();
+
+                    if (input.ToUpper() == "A")
+                    {
+                        e.player.DeductMoney(200);
+                        Console.WriteLine($"{e.player.name} paid R200 tax");
+                    }
+                    else
+                    {
+                        int amount = Convert.ToInt16(e.player.GetPlayerValue(e.game) * 0.1);
+                        e.player.DeductMoney(amount);
+                        Console.WriteLine($"{e.player.name} paid {amount} tax");
+                    }
+
                 }
             }                  
         }

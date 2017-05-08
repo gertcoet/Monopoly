@@ -121,8 +121,13 @@ namespace Monoponly
         }
 
         public override string ToString()
-        {           
-            return JsonConvert.SerializeObject(this);            
+        {
+            var jsonSerialiasationSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            return JsonConvert.SerializeObject(this,jsonSerialiasationSettings);            
+
         }        
 
         public bool IsWinner()
@@ -154,6 +159,7 @@ namespace Monoponly
             }
             
         }
+
 
        
 

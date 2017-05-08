@@ -59,7 +59,9 @@ namespace Monoponly
 
         public interface ICCard
         {
+            string description { get; }
             void PerformActions(Game game, Player player);
+
         }
 
         public interface IRent

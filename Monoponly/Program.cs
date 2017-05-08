@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Monoponly
 {
@@ -28,7 +29,17 @@ namespace Monoponly
                 for (int k = 0; k <= 1000; k++)
                 {
                     game.PlayerTurn();
+                    //game.players.GetCurrecntPlayer().MovePlayer(game.Board["Income Tax"], true);
+                    //game.players.GetCurrecntPlayer().PlayerLandedOnSpace(game, game.Board["Income Tax"]);
                 }
+
+                //StreamWriter sw = new StreamWriter(@"D:\momo.test");
+                //using(sw)
+                //{
+                //    string line = game.ToString();
+                //    sw.Write(line);
+                //}
+
 
             }
             catch (Exception e)

@@ -13,7 +13,7 @@ namespace Monoponly
         public abstract class CCard : ICCard
         {
             public CCardType ccardType { get; }
-            public String description { get; }
+            public string description { get; }
 
             public CCard(CCardType CCardType, string Description)
             {

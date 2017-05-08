@@ -148,9 +148,27 @@ namespace Monoponly
 
                 if (LandOnSpace != null)
                     LandOnSpace(this, new LandedOnSpaceEventArgs { game = game, boardspace = space, player = this });
-                //TODO hook upp the event actrion
 
             }
+
+            public int GetPlayerValue(Game game)
+            {
+                //Gets the total value of a player
+                var propType = game.Board.OfType<Property>();
+                var properties = from property in propType
+                                 where (property.owner == this)
+                                 select new {
+                                                price = property.purchasePrice,
+                                                buildings = property.buildingsOnProperty,
+                                                buildingsValue = property.buildingsOnProperty * property.buildingCost
+                                            };
+
+                int playerPropertyValue = properties.Select(p => p.price).Sum();
+                int playerBuidlingsValue = properties.Select(b => b.buildingsValue).Sum();
+
+                return playerPropertyValue + playerBuidlingsValue + this.money;            
+            }
+
 
         }
 
@@ -252,10 +270,7 @@ namespace Monoponly
                 return dice1 == dice2 ? true : false;
             }
         }
-
-      
      
-
         #endregion
     }
 }
